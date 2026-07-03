@@ -76,7 +76,11 @@ for game_dir in "$INSTALL_DIR"/repo/games/*/; do
         if [ ! -x "$game_dir/build.sh" ]; then
             log "[$game_id] ATTENZIONE: build.sh non ha il bit eseguibile, lo eseguo comunque con bash"
         fi
-        sudo -u "$GAME_USER" env EMSDK_QUAKE="$(command -v emcc)" \
+        # sudo -u sanitizza il PATH per default (secure_path): senza
+        # passarlo esplicitamente qui, emcc/emmake (aggiunti al PATH da
+        # emsdk_env.sh sourcato sopra, nella shell di root) sparirebbero
+        # per il processo lanciato come $GAME_USER.
+        sudo -u "$GAME_USER" env PATH="$PATH" EMSDK_QUAKE="$(command -v emcc)" \
             bash "$game_dir/build.sh" "$BUILD_DIR" "$dest_web"
     else
         log "[$game_id] ATTENZIONE: nessun build.sh trovato, skip"
