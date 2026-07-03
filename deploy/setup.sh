@@ -13,6 +13,11 @@ WEB_DIR="$INSTALL_DIR/web"
 BUILD_DIR="$INSTALL_DIR/build"
 GAME_USER="${GAME_USER:-gamehub}"
 EMSDK_VERSION="${EMSDK_VERSION:-latest}"
+# Elenco (comma-separated) di game id per cui NON eseguire games/<id>/build.sh,
+# utile se hai copiato a mano dei WASM/asset custom in web/games/<id>/ (es.
+# via WinSCP) e non vuoi che vengano sovrascritti dalla build automatica.
+# Esempio: SKIP_BUILD=doom,quake3 sudo -E ./deploy/setup.sh
+SKIP_BUILD="${SKIP_BUILD:-}"
 
 if [ "$(id -u)" -ne 0 ]; then
     log "Questo script va eseguito come root (sudo ./deploy/setup.sh)."
@@ -63,7 +68,11 @@ for game_dir in "$INSTALL_DIR"/repo/games/*/; do
 
     log "--- gioco: $game_id ---"
     dest_web="$WEB_DIR/games/$game_id"
-    if [ -x "$game_dir/build.sh" ]; then
+    if echo ",$SKIP_BUILD," | grep -q ",$game_id,"; then
+        log "[$game_id] SKIP_BUILD attivo: non eseguo build.sh, uso quanto gia' presente in $dest_web"
+        mkdir -p "$dest_web"
+        chown -R "$GAME_USER":"$GAME_USER" "$dest_web"
+    elif [ -x "$game_dir/build.sh" ]; then
         sudo -u "$GAME_USER" env EMSDK_QUAKE="$(command -v emcc)" \
             "$game_dir/build.sh" "$BUILD_DIR" "$dest_web"
     fi

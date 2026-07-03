@@ -152,6 +152,35 @@ repo. Se possiedi legalmente le copie originali puoi sostituirle:
   [games/quake3/build.sh](games/quake3/build.sh)) e ri-esegui
   `games/quake3/build.sh` per ripacchettare gli asset per il client web.
 
+## Installare WASM/asset compilati a mano (es. via WinSCP)
+
+Se preferisci compilare i client altrove e copiare i file gia' pronti
+sulla VM (invece di far girare `games/*/build.sh` in loco), i percorsi di
+destinazione serviti da nginx sono:
+
+```
+/opt/lan-game-hub/web/games/doom/     -> .html, .js, .wasm, IWAD
+/opt/lan-game-hub/web/games/quake3/   -> .html, .js, .wasm
+```
+
+Dopo aver copiato i file (es. con WinSCP), sistema owner/permessi:
+
+```bash
+sudo chown -R gamehub:gamehub /opt/lan-game-hub/web
+```
+
+Per evitare che una successiva esecuzione di `deploy/setup.sh` sovrascriva
+questi file con una build automatica, escludi il/i gioco/i interessato/i
+con `SKIP_BUILD` (elenco comma-separated di `id` presi da `games/<id>/`):
+
+```bash
+SKIP_BUILD=doom,quake3 sudo -E ./deploy/setup.sh
+```
+
+Lo script salta `build.sh` solo per i giochi elencati; tutto il resto
+(systemd, nginx, venv del relay, ecc.) viene comunque configurato
+normalmente.
+
 ## Specifiche VM consigliate
 
 | Risorsa | Valore | Perche' |
