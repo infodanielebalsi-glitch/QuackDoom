@@ -133,8 +133,13 @@ rm -f /etc/nginx/sites-enabled/default
 nginx -t
 
 systemctl daemon-reload
-systemctl enable --now doom-relay.service quake3-server.service
-systemctl enable --now nginx
+systemctl enable doom-relay.service quake3-server.service
+systemctl restart doom-relay.service quake3-server.service
+# "enable --now" e' un no-op se nginx era gia' attivo (es. avviato dal
+# pacchetto all'installazione, prima ancora che questa config esistesse):
+# serve un reload esplicito per far leggere la nuova config in ogni caso.
+systemctl enable nginx
+systemctl reload-or-restart nginx
 
 log ""
 log "Setup completato."
