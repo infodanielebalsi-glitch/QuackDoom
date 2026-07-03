@@ -95,7 +95,7 @@ rm -f "$GAMES_JSON.tmp"
 
 log "== 6/7: relay Doom (venv Python) =="
 DOOM_RELAY_DIR="$INSTALL_DIR/games/doom/relay"
-mkdir -p "$INSTALL_DIR/games"
+mkdir -p "$DOOM_RELAY_DIR"
 rsync -a --delete "$INSTALL_DIR/repo/games/doom/relay/" "$DOOM_RELAY_DIR/"
 sudo -u "$GAME_USER" python3 -m venv "$DOOM_RELAY_DIR/venv"
 sudo -u "$GAME_USER" "$DOOM_RELAY_DIR/venv/bin/pip" install --quiet -r "$DOOM_RELAY_DIR/requirements.txt"
