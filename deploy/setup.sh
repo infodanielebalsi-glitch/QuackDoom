@@ -72,9 +72,14 @@ for game_dir in "$INSTALL_DIR"/repo/games/*/; do
         log "[$game_id] SKIP_BUILD attivo: non eseguo build.sh, uso quanto gia' presente in $dest_web"
         mkdir -p "$dest_web"
         chown -R "$GAME_USER":"$GAME_USER" "$dest_web"
-    elif [ -x "$game_dir/build.sh" ]; then
+    elif [ -f "$game_dir/build.sh" ]; then
+        if [ ! -x "$game_dir/build.sh" ]; then
+            log "[$game_id] ATTENZIONE: build.sh non ha il bit eseguibile, lo eseguo comunque con bash"
+        fi
         sudo -u "$GAME_USER" env EMSDK_QUAKE="$(command -v emcc)" \
-            "$game_dir/build.sh" "$BUILD_DIR" "$dest_web"
+            bash "$game_dir/build.sh" "$BUILD_DIR" "$dest_web"
+    else
+        log "[$game_id] ATTENZIONE: nessun build.sh trovato, skip"
     fi
 
     if $first; then first=false; else echo "," >> "$GAMES_JSON.tmp"; fi
