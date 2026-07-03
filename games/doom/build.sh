@@ -83,6 +83,11 @@ mkdir -p "$DEST_DIR"
 log "[doom] copio gli artefatti statici in $DEST_DIR"
 cp "$SRC_DIR"/src/*.html "$SRC_DIR"/src/*.js "$SRC_DIR"/src/*.wasm "$DEST_DIR"/ 2>/dev/null || true
 cp "$SRC_DIR"/src/*.data "$DEST_DIR"/ 2>/dev/null || true
+# doom1.wad e default.cfg NON vengono incorporati nel bundle wasm: il
+# runtime li fetcha via HTTP come file separati (path relativo), vanno
+# quindi serviti staticamente insieme al resto.
+cp "$SRC_DIR/src/doom1.wad" "$DEST_DIR"/ 2>/dev/null || true
+cp "$SRC_DIR/src/default.cfg" "$DEST_DIR"/ 2>/dev/null || true
 cp "$SRC_DIR"/src/favicon.ico "$DEST_DIR"/ 2>/dev/null || true
 
 log "[doom] build completata."
