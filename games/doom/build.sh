@@ -13,7 +13,7 @@ BUILD_DIR="${1:?uso: build.sh <build_dir> <dest_web_dir>}"
 DEST_DIR="${2:?uso: build.sh <build_dir> <dest_web_dir>}"
 
 DOOM_WASM_REPO="${DOOM_WASM_REPO:-https://github.com/cloudflare/doom-wasm.git}"
-DOOM_WASM_REF="${DOOM_WASM_REF:-master}"
+DOOM_WASM_REF="${DOOM_WASM_REF:-main}"
 FREEDOOM_VERSION="${FREEDOOM_VERSION:-0.13.0}"
 FREEDOOM_URL="${FREEDOOM_URL:-https://github.com/freedoom/freedoom/releases/download/v${FREEDOOM_VERSION}/freedoom-${FREEDOOM_VERSION}.zip}"
 
