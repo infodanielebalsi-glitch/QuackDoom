@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LAN Game Hub</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #111; color: #eee; margin: 0; padding: 2rem; }
+  h1 { margin-bottom: 0.25rem; }
+  p.sub { color: #999; margin-top: 0; }
+  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 2rem; }
+  .card { background: #1c1c1c; border: 1px solid #333; border-radius: 8px; padding: 1.25rem; }
+  .card h2 { margin-top: 0; }
+  .card a.play { display: inline-block; margin-top: 0.75rem; background: #b3232f; color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; }
+  .card a.play:hover { background: #d42a38; }
+  .meta { color: #999; font-size: 0.9rem; }
+  #status { color: #666; font-size: 0.85rem; margin-top: 2rem; }
+</style>
+</head>
+<body>
+  <h1>LAN Game Hub</h1>
+  <p class="sub">Giochi multiplayer via browser, nessuna installazione richiesta.</p>
+
+  <div class="games" id="games"></div>
+  <div id="status">Carico elenco giochi...</div>
+
+<script>
+  // Elenco giochi caricato da games.json (generato/gestito da deploy/setup.sh
+  // a partire dai vari games/<id>/game.json). Aggiungere un gioco = aggiungere
+  // una entry qui, nessun'altra modifica alla hub page.
+  fetch('games.json')
+    .then(r => r.json())
+    .then(games => {
+      const container = document.getElementById('games');
+      const status = document.getElementById('status');
+      status.remove();
+      for (const g of games) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h2>${g.name}</h2>
+          <p>${g.description}</p>
+          <p class="meta">Fino a ${g.max_players} giocatori</p>
+          <a class="play" href="${g.web_path}">Gioca</a>
+        `;
+        container.appendChild(card);
+      }
+    })
+    .catch(() => {
+      document.getElementById('status').textContent =
+        'Impossibile caricare games.json. Verifica che deploy/setup.sh sia stato eseguito.';
+    });
+</script>
+</body>
+</html>

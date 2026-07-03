@@ -1,0 +1,16 @@
+{
+  "id": "doom",
+  "name": "Doom",
+  "description": "Chocolate Doom (via cloudflare/doom-wasm), fino a 4 giocatori.",
+  "max_players": 4,
+  "web_path": "/games/doom/",
+  "needs_server": true,
+  "server": {
+    "type": "websocket-relay",
+    "systemd_unit": "doom-relay.service",
+    "internal_host": "127.0.0.1",
+    "internal_port_env": "DOOM_RELAY_PORT",
+    "internal_port_default": 8771,
+    "nginx_ws_path": "/ws/doom/"
+  }
+}

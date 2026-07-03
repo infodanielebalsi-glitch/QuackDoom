@@ -1,0 +1,24 @@
+[Unit]
+Description=Doom multiplayer WebSocket relay
+After=network.target
+PartOf=lan-game-hub.target
+
+[Service]
+Type=simple
+User=gamehub
+Group=gamehub
+EnvironmentFile=-/etc/lan-game-hub/doom-relay.env
+WorkingDirectory=/opt/lan-game-hub/games/doom/relay
+# --workers 1 e' OBBLIGATORIO: lo stato delle lobby vive in memoria di
+# processo (vedi commenti in relay/main.py). Piu' worker = host e client
+# potrebbero finire su processi diversi e non vedersi mai.
+ExecStart=/bin/sh -c 'exec /opt/lan-game-hub/games/doom/relay/venv/bin/uvicorn main:app --host 127.0.0.1 --port "${DOOM_RELAY_PORT:-8771}" --workers 1'
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

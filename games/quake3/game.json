@@ -1,0 +1,16 @@
+{
+  "id": "quake3",
+  "name": "Quake III Arena",
+  "description": "ioquake3 via QuakeJS (client WASM in browser, dedicated server nativo con supporto WebSocket), fino a 16 giocatori. Usa gli asset liberi di OpenArena per default; sostituibile con pak0.pk3 originale (non incluso, copyright).",
+  "max_players": 16,
+  "web_path": "/games/quake3/",
+  "needs_server": true,
+  "server": {
+    "type": "ioq3-dedicated-websocket",
+    "systemd_unit": "quake3-server.service",
+    "internal_host": "127.0.0.1",
+    "internal_port_env": "QUAKE3_WS_PORT",
+    "internal_port_default": 27960,
+    "nginx_ws_path": "/ws/quake3/"
+  }
+}

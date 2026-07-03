@@ -1,0 +1,22 @@
+[Unit]
+Description=Quake III Arena dedicated server (ioq3, WebSocket)
+After=network.target
+PartOf=lan-game-hub.target
+
+[Service]
+Type=simple
+User=gamehub
+Group=gamehub
+Environment=QUAKEJS_DIR=/opt/lan-game-hub/build/quakejs
+EnvironmentFile=-/etc/lan-game-hub/quake3-server.env
+WorkingDirectory=/opt/lan-game-hub/build/quakejs
+ExecStart=/opt/lan-game-hub/games/quake3/server/start.sh
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=LAN Game Hub (tutti i server di gioco)
+Wants=doom-relay.service quake3-server.service
+
+[Install]
+WantedBy=multi-user.target
