@@ -56,7 +56,18 @@ fi
 log "[doom] build (scripts/clean.sh + scripts/build.sh upstream, via emmake/autotools)"
 (
     cd "$SRC_DIR"
-    bash scripts/clean.sh
+    # Il configure.ac di questo progetto e' vecchio stile (autoconf
+    # classico) e il codice C di Chocolate Doom fa uso di dichiarazioni
+    # implicite di funzione (stile C89). I Clang recenti usati da
+    # Emscripten moderni trattano questo come ERRORE, non warning, il
+    # che rompe sia il check "undeclared builtins" di configure sia
+    # potenzialmente la compilazione vera e propria piu' avanti. Si
+    # forza il comportamento storico (solo warning) per compatibilita'.
+    export CFLAGS="${CFLAGS:-} -Wno-error=implicit-function-declaration -Wno-implicit-function-declaration"
+    export CPPFLAGS="${CPPFLAGS:-} -Wno-error=implicit-function-declaration -Wno-implicit-function-declaration"
+    # "make clean" fallisce al primo build (nessun Makefile ancora
+    # generato): atteso, non fatale, lo script upstream non usa set -e.
+    bash scripts/clean.sh || true
     bash scripts/build.sh
 )
 
