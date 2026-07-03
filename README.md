@@ -143,10 +143,12 @@ vera e propria (la LAN e' gia' isolata).
 Nessun materiale coperto da copyright viene scaricato o incluso in questa
 repo. Se possiedi legalmente le copie originali puoi sostituirle:
 
-- **Doom**: copia `doom2.wad` (o altro IWAD proprietario) in
-  `/opt/lan-game-hub/web/games/doom/`, poi ri-esegui `deploy/setup.sh` o
-  semplicemente riavvia il client — il file viene servito staticamente
-  insieme agli altri asset.
+- **Doom**: il WAD viene incorporato nel bundle WASM in fase di build (non
+  è un file separato servito a runtime). Copia `doom2.wad` (o altro IWAD
+  proprietario) in `/opt/lan-game-hub/build/doom-wasm/src/`, rinominalo in
+  `doom1.wad` (nome fisso richiesto dal build system upstream), poi
+  ri-esegui `games/doom/build.sh` (o l'intero `deploy/setup.sh`) per
+  ricompilare.
 - **Quake III Arena**: copia `pak0.pk3` e gli altri pak ufficiali in
   `/opt/lan-game-hub/build/quakejs/baseoa/` (vedi commento finale di
   [games/quake3/build.sh](games/quake3/build.sh)) e ri-esegui

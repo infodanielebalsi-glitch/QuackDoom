@@ -28,7 +28,8 @@ log "== 1/7: pacchetti di sistema =="
 apt-get update
 apt-get install -y --no-install-recommends \
     git curl unzip rsync build-essential python3 python3-venv python3-pip \
-    nginx nodejs npm ca-certificates
+    nginx nodejs npm ca-certificates \
+    automake autoconf libtool pkg-config
 
 log "== 2/7: utente di servizio non privilegiato =="
 if ! id "$GAME_USER" >/dev/null 2>&1; then

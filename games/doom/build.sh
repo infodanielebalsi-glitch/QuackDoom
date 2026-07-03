@@ -3,6 +3,14 @@
 # come IWAD di default. Pensato per essere invocato da deploy/setup.sh,
 # ma puo' anche girare da solo per rebuild/aggiornamenti.
 #
+# Nota sul build system upstream: doom-wasm usa autotools + Emscripten
+# (./scripts/build.sh nel loro repo, non un Makefile diretto), e si
+# aspetta l'IWAD gia' presente in ./src con nome fisso "doom1.wad" PRIMA
+# della build: viene incorporato nel bundle WASM come file precaricato
+# (Module.FS.createPreloadedFile), non servito come asset separato a
+# runtime. Per questo scarichiamo/rinominiamo Freedoom in doom1.wad prima
+# di lanciare la build, invece di copiarlo dopo.
+#
 # Uso: games/doom/build.sh <build_dir> <web_root>/games/doom
 set -euo pipefail
 
@@ -19,6 +27,11 @@ FREEDOOM_URL="${FREEDOOM_URL:-https://github.com/freedoom/freedoom/releases/down
 
 log "== [doom] build client web =="
 
+require_cmd automake
+require_cmd autoconf
+require_cmd libtool
+require_emsdk
+
 SRC_DIR="$BUILD_DIR/doom-wasm"
 if [ ! -d "$SRC_DIR" ]; then
     log "[doom] clono doom-wasm ($DOOM_WASM_REF)"
@@ -27,30 +40,30 @@ else
     log "[doom] doom-wasm gia' presente, skip clone (rimuovi $SRC_DIR per rifare da zero)"
 fi
 
-require_emsdk
+IWAD_TARGET="$SRC_DIR/src/doom1.wad"
+if [ ! -f "$IWAD_TARGET" ]; then
+    log "[doom] scarico Freedoom $FREEDOOM_VERSION (IWAD libero, nessun copyright issue)"
+    curl -fsSL "$FREEDOOM_URL" -o "$BUILD_DIR/freedoom.zip"
+    unzip -j -o "$BUILD_DIR/freedoom.zip" "freedoom-${FREEDOOM_VERSION}/freedoom2.wad" -d "$BUILD_DIR"
+    # Nome fisso richiesto dal build system upstream (vedi nota sopra).
+    mv "$BUILD_DIR/freedoom2.wad" "$IWAD_TARGET"
+else
+    log "[doom] IWAD gia' presente in $IWAD_TARGET, skip download"
+    log "[doom] (per usare un IWAD proprietario, es. doom2.wad, sostituisci questo file"
+    log "[doom]  manualmente rinominandolo in doom1.wad e ri-lancia questo script)"
+fi
 
-log "[doom] build con emmake/emcc"
+log "[doom] build (scripts/clean.sh + scripts/build.sh upstream, via emmake/autotools)"
 (
     cd "$SRC_DIR"
-    # Il Makefile del progetto produce i file statici sotto websockets-doom/.
-    emmake make -j"$(nproc)"
+    bash scripts/clean.sh
+    bash scripts/build.sh
 )
 
 mkdir -p "$DEST_DIR"
 log "[doom] copio gli artefatti statici in $DEST_DIR"
-cp -r "$SRC_DIR"/websockets-doom/*.html \
-      "$SRC_DIR"/websockets-doom/*.js \
-      "$SRC_DIR"/websockets-doom/*.wasm \
-      "$DEST_DIR"/ 2>/dev/null || true
+cp "$SRC_DIR"/src/*.html "$SRC_DIR"/src/*.js "$SRC_DIR"/src/*.wasm "$DEST_DIR"/ 2>/dev/null || true
+cp "$SRC_DIR"/src/*.data "$DEST_DIR"/ 2>/dev/null || true
+cp "$SRC_DIR"/src/favicon.ico "$DEST_DIR"/ 2>/dev/null || true
 
-IWAD_DIR="$DEST_DIR"
-if [ ! -f "$IWAD_DIR/freedoom1.wad" ] && [ ! -f "$IWAD_DIR/freedoom2.wad" ]; then
-    log "[doom] scarico Freedoom $FREEDOOM_VERSION (IWAD libero, nessun copyright issue)"
-    curl -fsSL "$FREEDOOM_URL" -o "$BUILD_DIR/freedoom.zip"
-    unzip -j -o "$BUILD_DIR/freedoom.zip" "freedoom-${FREEDOOM_VERSION}/freedoom2.wad" -d "$IWAD_DIR"
-else
-    log "[doom] IWAD gia' presente in $IWAD_DIR, skip download"
-fi
-
-log "[doom] build completata. Per usare un IWAD proprietario (es. doom2.wad),"
-log "[doom] copialo manualmente in $IWAD_DIR/ (vedi README.md, non va incluso nella repo)."
+log "[doom] build completata."
