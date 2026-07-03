@@ -25,6 +25,11 @@ SRC_DIR="$BUILD_DIR/quakejs"
 if [ ! -d "$SRC_DIR" ]; then
     log "[quake3] clono quakejs ($QUAKEJS_REF) con submodule ioq3"
     git clone --branch "$QUAKEJS_REF" "$QUAKEJS_REPO" "$SRC_DIR"
+    # Il .gitmodules di questo repo referenzia ioq3 via protocollo git://
+    # (porta 9418), disabilitato da GitHub da anni: va forzato su https://
+    # prima di inizializzare il submodule, altrimenti il clone va in
+    # timeout.
+    git config --global url."https://github.com/".insteadOf "git://github.com/"
     (cd "$SRC_DIR" && git submodule update --init --recursive)
 else
     log "[quake3] quakejs gia' presente, skip clone (rimuovi $SRC_DIR per rifare da zero)"
