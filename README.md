@@ -7,6 +7,14 @@ cartella sotto `games/`, con il proprio server e la propria voce nella
 pagina hub. Aggiungere un terzo gioco in futuro non richiede toccare quelli
 esistenti.
 
+> Progetto amatoriale/didattico, pensato per essere self-hosted su una
+> propria LAN privata. Non è un servizio pubblico e non va esposto su
+> Internet così com'è (vedi [Vincoli e note](#vincoli-e-note)). Non
+> distribuisce alcun asset di gioco proprietario: usa di default IWAD/pak
+> liberi (Freedoom, OpenArena); l'uso di materiale originale copyrighted
+> (doom2.wad, pak0.pk3) è a discrezione e responsabilità di chi lo
+> installa, e deve provenire da una copia posseduta legalmente.
+
 ## Giochi inclusi
 
 | Gioco | Motore | Max giocatori | Note |
@@ -80,8 +88,8 @@ scripts/common.sh        funzioni condivise dai build.sh
 ```bash
 ssh <utente>@<ip-vm>
 sudo apt-get update && sudo apt-get install -y git
-git clone <url-di-questa-repo> lan-game-hub
-cd lan-game-hub
+git clone https://github.com/infodanielebalsi-glitch/QuackDoom.git
+cd QuackDoom
 ```
 
 ### 3. Setup end-to-end
