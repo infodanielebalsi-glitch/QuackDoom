@@ -29,7 +29,7 @@ log "== [doom] build client web =="
 
 require_cmd automake
 require_cmd autoconf
-require_cmd libtool
+require_cmd libtoolize
 require_emsdk
 
 SRC_DIR="$BUILD_DIR/doom-wasm"
