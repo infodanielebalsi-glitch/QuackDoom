@@ -53,6 +53,14 @@ else
     log "[doom]  manualmente rinominandolo in doom1.wad e ri-lancia questo script)"
 fi
 
+# configure.ac (e tests/Makefile) usano il flag Emscripten
+# EXTRA_EXPORTED_RUNTIME_METHODS, rinominato in EXPORTED_RUNTIME_METHODS
+# nelle versioni recenti di Emscripten (quello vecchio non e' piu'
+# riconosciuto e fa fallire sia "configure" che la compilazione vera e
+# propria). Patchiamo il sorgente dopo il clone.
+log "[doom] patch: EXTRA_EXPORTED_RUNTIME_METHODS -> EXPORTED_RUNTIME_METHODS (rinominato in Emscripten recenti)"
+sed -i 's/EXTRA_EXPORTED_RUNTIME_METHODS/EXPORTED_RUNTIME_METHODS/g' "$SRC_DIR/configure.ac"
+
 log "[doom] build (scripts/clean.sh + scripts/build.sh upstream, via emmake/autotools)"
 (
     cd "$SRC_DIR"
