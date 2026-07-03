@@ -27,7 +27,7 @@ fi
 log "== 1/7: pacchetti di sistema =="
 apt-get update
 apt-get install -y --no-install-recommends \
-    git curl unzip build-essential python3 python3-venv python3-pip \
+    git curl unzip rsync build-essential python3 python3-venv python3-pip \
     nginx nodejs npm ca-certificates
 
 log "== 2/7: utente di servizio non privilegiato =="
